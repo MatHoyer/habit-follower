@@ -13,7 +13,6 @@ model User {
   password      String
 
   createdTodos  Todo[]
-  dailyTodo     DailyTodo[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -21,27 +20,26 @@ model User {
 
 model Todo {
   id        Int @id @default(autoincrement())
-  name      String @unique
+  name      String
 
   owner     User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId   Int
 
-  dailyTodo DailyTodo[]
+  @@unique([name, ownerId])
+
+  isDone    Valid[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model DailyTodo {
-  id           Int @id @default(autoincrement())
-  name         String @unique
+model Valid {
+  id      Int @id @default(autoincrement())
 
-  owner       User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId     Int
-  todoPattern Todo @relation(fields: [todoId], references: [id], onDelete: Cascade)
-  todoId      Int
+  isDone  Boolean @default(false)
 
-  isDone      Boolean @default(false)
+  todo    Todo @relation(fields: [todoId], references: [id], onDelete: Cascade)
+  todoId  Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
