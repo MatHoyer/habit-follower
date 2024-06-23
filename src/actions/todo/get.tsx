@@ -2,7 +2,7 @@
 import prisma from '@/lib/prisma';
 import jwt from 'jsonwebtoken';
 
-const getTodo = async (token: string, todoName: string) => {
+export const getTodo = async (token: string, todoName: string) => {
   const decodedToken = jwt.decode(token) as TToken;
   if (!decodedToken) throw new Error('Empty token');
   const { id } = decodedToken;
@@ -17,9 +17,20 @@ const getTodo = async (token: string, todoName: string) => {
     },
   });
 
-  return {
-    todo,
-  };
+  return todo;
 };
 
-export default getTodo;
+export const getAllTodos = async (token: string) => {
+  const decodedToken = jwt.decode(token) as TToken;
+  if (!decodedToken) throw new Error('Empty token');
+  const { name } = decodedToken;
+
+  const user = await prisma.user.findUnique({
+    where: { name },
+    include: { createdTodos: { include: { isDone: true } } },
+  });
+
+  if (!user) throw new Error('User not found');
+
+  return user.createdTodos;
+};
