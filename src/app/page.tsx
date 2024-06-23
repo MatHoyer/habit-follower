@@ -1,22 +1,27 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const Home = () => {
-  const isAuthenticated = () => {
-    return localStorage.getItem('auth');
-  };
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (localStorage.getItem('auth')) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   return (
     <div className="flex flex-col justify-center items-center gap-3">
-      {!!isAuthenticated() ? (
+      {isAuthenticated ? (
         <>
           Logged
           <Button
             onClick={() => {
               localStorage.removeItem('auth');
-              router.refresh();
+              location.reload();
             }}
           >
             Disconect
