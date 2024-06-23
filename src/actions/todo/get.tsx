@@ -7,10 +7,9 @@ export const getTodo = async (token: string, todoName: string) => {
   if (!decodedToken) throw new Error('Empty token');
   const { id } = decodedToken;
 
-  const todo = await prisma.todo.findFirst({
+  const todo = await prisma.todo.findUnique({
     where: {
-      name: todoName,
-      ownerId: id,
+      name_ownerId: { name: todoName, ownerId: id },
     },
     include: {
       isDone: true,

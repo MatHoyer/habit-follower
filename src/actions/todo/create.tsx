@@ -20,9 +20,7 @@ const createTodo = async (token: string, todoName: string) => {
     },
   });
 
-  return {
-    todo,
-  };
+  return todo;
 };
 
 export default createTodo;
