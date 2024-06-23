@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Inter as FontSans } from 'next/font/google';
+import './globals.css';
 
 export const metadata = {
   title: 'Habit follower',
@@ -13,8 +14,10 @@ const fontSans = FontSans({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>{children}</body>
+    <html lang="fr">
+      <body className={cn('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
+        <div className="flex justify-center">{children}</div>
+      </body>
     </html>
   );
 }
