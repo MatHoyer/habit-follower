@@ -2,7 +2,7 @@
 const nextConfig = {
   experimental: {
     serverActions: {
-      allowedOrigins: ['todo.mathieuhoyer.fr', 'localhost:3000'],
+      allowedOrigins: ['todo.mathieuhoyer.fr', 'localhost:3001'],
     },
   },
 };
