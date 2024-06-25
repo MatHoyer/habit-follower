@@ -68,4 +68,5 @@ const InputWithIcon = React.forwardRef<HTMLInputElement, InputProps>(({ Icon, cl
     </div>
   );
 });
+InputWithIcon.displayName = 'InputWithIcon';
 export { Input, InputWithIcon };
