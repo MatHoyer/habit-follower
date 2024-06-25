@@ -8,5 +8,9 @@ export const LoginButton = () => {
 };
 
 export const LogoutButton = () => {
-  return <Button onClick={() => signOut()}>Logout</Button>;
+  return (
+    <Button variant={'destructive'} onClick={() => signOut()}>
+      Logout
+    </Button>
+  );
 };

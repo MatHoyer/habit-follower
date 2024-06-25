@@ -1,4 +1,4 @@
-import { LoginButton, LogoutButton } from '@/components/AuthButton';
+import { LoginButton } from '@/components/AuthButton';
 import { TodoTable } from '@/components/TodoTable';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
@@ -16,15 +16,13 @@ const Home = async () => {
   });
 
   return (
-    <div className={cn('flex flex-col items-center gap-3 h-screen', !session?.user && 'justify-center')}>
-      {session?.user ? (
-        <div>
-          <TodoTable todos={todos} />
-          <LogoutButton />
-        </div>
-      ) : (
-        <LoginButton />
+    <div
+      className={cn(
+        'container max-w-5xl my-10 space-y-10 px-3',
+        !session?.user && 'flex justify-center items-center h-screen my-0'
       )}
+    >
+      {session?.user ? <TodoTable todos={todos} /> : <LoginButton />}
     </div>
   );
 };

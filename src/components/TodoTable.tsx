@@ -2,6 +2,7 @@
 import { addTodo, removeTodo, toggleTodo } from '@/actions/todo';
 import { X } from 'lucide-react';
 import { useState } from 'react';
+import { LogoutButton } from './AuthButton';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Switch } from './ui/switch';
@@ -11,7 +12,14 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
   const [newName, setNewName] = useState('');
 
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex gap-5">
+      <div className="sticky top-16 h-fit rounded-lg border bg-background px-4 py-4 md:w-[260px] flex flex-col gap-3">
+        <Input placeholder="new todo name" onChange={(e) => setNewName(e.target.value)} />
+        <Button onClick={() => addTodo(newName)} disabled={newName === ''}>
+          Add todo
+        </Button>
+        <LogoutButton />
+      </div>
       <Table>
         <TableCaption>List of todos.</TableCaption>
         <TableHeader>
@@ -39,12 +47,6 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
           ))}
         </TableBody>
       </Table>
-      <div className="flex flex-col justify-center items-center mt-5">
-        <Input placeholder="new todo name" onChange={(e) => setNewName(e.target.value)} />
-        <Button className="mt-5" onClick={() => addTodo(newName)} disabled={newName === ''}>
-          Add todo
-        </Button>
-      </div>
     </div>
   );
 };
