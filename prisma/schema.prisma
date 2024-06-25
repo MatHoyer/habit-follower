@@ -8,38 +8,86 @@ datasource db {
 }
 
 model User {
-  id            Int @id @default(autoincrement())
-  name          String @unique
-  password      String
+  id            String          @id @default(cuid())
+  name          String?
+  username      String?         @unique
+  email         String?         @unique
+  emailVerified DateTime?
+  image         String?
+  Session       Session[]
+  Account       Account?
 
-  createdTodos  Todo[]
-
+  todos         Todo[]
+ 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+ 
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String  @unique
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User?   @relation(fields: [userId], references: [id])
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+ 
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  @@index([userId])
+}
+ 
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@unique([identifier, token])
 }
 
 model Todo {
-  id        Int @id @default(autoincrement())
-  name      String
+  id         String   @id @default(cuid())
+  name       String
 
-  owner     User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  ownerId   Int
+  owner      User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId    String
 
   @@unique([name, ownerId])
 
-  isDone    Valid[]
+  days       Day[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Valid {
-  id      Int @id @default(autoincrement())
+model Day {
+  id         String   @id @default(cuid())
+  isDone     Boolean @default(false)
 
-  isDone  Boolean @default(false)
-
-  todo    Todo @relation(fields: [todoId], references: [id], onDelete: Cascade)
-  todoId  Int
+  todo       Todo @relation(fields: [todoId], references: [id], onDelete: Cascade)
+  todoId     String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
