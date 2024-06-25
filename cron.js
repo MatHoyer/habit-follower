@@ -7,4 +7,4 @@ const task = () => {
   fetch('http://localhost:3000/api/cron');
 };
 
-cron.schedule('* * * * *', task);
+cron.schedule('0 0 * * *', task);
