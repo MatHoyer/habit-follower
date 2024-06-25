@@ -1,23 +1,57 @@
 'use client';
 import { addTodo, removeTodo, toggleTodo } from '@/actions/todo';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { LogoutButton } from './AuthButton';
 import { Button } from './ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
 import { Input } from './ui/input';
 import { Switch } from './ui/switch';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 
+const formSchema = z.object({
+  name: z.string().min(1, 'Name too short').max(15, 'Name too long'),
+});
+
+type Form = z.infer<typeof formSchema>;
+
 export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
-  const [newName, setNewName] = useState('');
+  const form = useForm<Form>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+    },
+  });
+
+  const onSubmit = (values: Form) => {
+    addTodo(values.name);
+  };
 
   return (
     <div className="flex gap-5">
       <div className="sticky top-16 h-fit rounded-lg border bg-background px-4 py-4 md:w-[260px] flex flex-col gap-3">
-        <Input placeholder="new todo name" onChange={(e) => setNewName(e.target.value)} />
-        <Button onClick={() => addTodo(newName)} disabled={newName === ''}>
-          Add todo
-        </Button>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <div className="flex flex-col gap-3">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nom</FormLabel>
+                    <FormControl>
+                      <Input placeholder="new todo name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit">Add todo</Button>
+            </div>
+          </form>
+        </Form>
         <LogoutButton />
       </div>
       <Table>
