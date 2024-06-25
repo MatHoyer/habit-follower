@@ -5,18 +5,19 @@ export const dynamic = 'force-dynamic';
 export const GET = async (request: NextRequest) => {
   const host = request.headers.get('host');
 
-  if (host && !host.includes('localhost') && !host.startsWith('127.0.0.1'))
-    return NextResponse.json({ status: 'unauthorized' });
+  if (host && (host.includes('localhost') || host.startsWith('127.0.0.1'))) {
+    const todos = await prisma.todo.findMany();
 
-  const todos = await prisma.todo.findMany();
-
-  todos.map(async (todo) => {
-    await prisma.day.create({
-      data: {
-        todoId: todo.id,
-      },
+    todos.map(async (todo) => {
+      await prisma.day.create({
+        data: {
+          todoId: todo.id,
+        },
+      });
     });
-  });
 
-  return NextResponse.json({ status: 'ok' });
+    return NextResponse.json({ status: 'ok' });
+  } else {
+    return NextResponse.json({ status: 'unauthorized' });
+  }
 };
