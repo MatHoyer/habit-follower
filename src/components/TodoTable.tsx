@@ -1,7 +1,8 @@
 'use client';
 import { addTodo, removeTodo, toggleTodo } from '@/actions/todo';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { X } from 'lucide-react';
+import { Eye, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { LogoutButton } from './AuthButton';
@@ -18,6 +19,8 @@ const formSchema = z.object({
 type Form = z.infer<typeof formSchema>;
 
 export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
+  const router = useRouter();
+
   const form = useForm<Form>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -60,7 +63,9 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Go to</TableHead>
             <TableHead className="w-[150px] text-right">%</TableHead>
+            <TableHead className="w-[150px] text-right">done / all</TableHead>
             <TableHead></TableHead>
           </TableRow>
         </TableHeader>
@@ -71,9 +76,15 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
               <TableCell>
                 <Switch defaultChecked={todo.days.at(-1)?.isDone} onCheckedChange={() => toggleTodo(todo.id)} />
               </TableCell>
-              <TableCell className="text-right">{`${
+              <TableCell>
+                <Eye className="cursor-pointer w-10" onClick={() => router.push(`/todo/${todo.id}`)} />
+              </TableCell>
+              <TableCell className="text-right">{`${Math.floor(
                 (todo.days.filter((day) => day.isDone === true).length / todo.days.length) * 100
-              }%`}</TableCell>
+              )}%`}</TableCell>
+              <TableCell className="text-right">{`${todo.days.filter((day) => day.isDone === true).length} / ${
+                todo.days.length
+              }`}</TableCell>
               <TableCell>
                 <X size={15} className="cursor-pointer" onClick={() => removeTodo(todo.id)} />
               </TableCell>

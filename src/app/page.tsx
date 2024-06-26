@@ -1,19 +1,12 @@
 import { LoginButton } from '@/components/AuthButton';
 import { TodoTable } from '@/components/TodoTable';
+import { useTodos } from '@/components/hook/useTodos';
 import { auth } from '@/lib/auth';
-import prisma from '@/lib/prisma';
 import { cn } from '@/lib/utils';
 
 const Home = async () => {
   const session = await auth();
-  const todos = await prisma.todo.findMany({
-    where: {
-      ownerId: session?.user?.id,
-    },
-    include: {
-      days: true,
-    },
-  });
+  const todos = await useTodos();
 
   return (
     <div

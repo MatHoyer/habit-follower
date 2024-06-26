@@ -1,0 +1,33 @@
+import { auth } from '@/lib/auth';
+import prisma from '@/lib/prisma';
+import { notFound } from 'next/navigation';
+
+export const useTodos = async () => {
+  const session = await auth();
+  const todos = await prisma.todo.findMany({
+    where: {
+      ownerId: session?.user?.id,
+    },
+    include: {
+      days: true,
+    },
+  });
+  return todos;
+};
+
+export const useTodo = async (id: string) => {
+  const session = await auth();
+  const todo = await prisma.todo.findUnique({
+    where: {
+      id,
+      ownerId: session?.user?.id,
+    },
+    include: {
+      days: { orderBy: { createdAt: 'desc' } },
+    },
+  });
+
+  if (!todo) return notFound();
+
+  return todo;
+};
