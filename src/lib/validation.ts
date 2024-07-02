@@ -5,3 +5,11 @@ export const addTodoSchema = z.object({
 });
 
 export type TAddTodoForm = z.infer<typeof addTodoSchema>;
+
+export const removeTodoSchema = z.object({
+  id: z.string(),
+});
+
+export const toggleTodoSchema = z.object({
+  id: z.string(),
+});

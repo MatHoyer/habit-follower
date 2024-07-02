@@ -2,10 +2,9 @@
 
 import prisma from '@/lib/prisma';
 import { actionClient } from '@/lib/safe-action';
-import { addTodoSchema } from '@/lib/validation';
+import { addTodoSchema, removeTodoSchema, toggleTodoSchema } from '@/lib/validation';
 import { flattenValidationErrors, returnValidationErrors } from 'next-safe-action';
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
 
 export const addTodo = actionClient
   .schema(addTodoSchema, {
@@ -34,10 +33,10 @@ export const addTodo = actionClient
   });
 
 export const removeTodo = actionClient
-  .schema(z.string(), {
-    handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).formErrors,
+  .schema(removeTodoSchema, {
+    handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).fieldErrors,
   })
-  .action(async ({ parsedInput: id, ctx }) => {
+  .action(async ({ parsedInput: { id }, ctx }) => {
     await prisma.todo.delete({
       where: {
         id,
@@ -49,10 +48,10 @@ export const removeTodo = actionClient
   });
 
 export const toggleTodo = actionClient
-  .schema(z.string(), {
-    handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).formErrors,
+  .schema(toggleTodoSchema, {
+    handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).fieldErrors,
   })
-  .action(async ({ parsedInput: id, ctx }) => {
+  .action(async ({ parsedInput: { id }, ctx }) => {
     const day = await prisma.day.findFirst({
       where: {
         todoId: id,

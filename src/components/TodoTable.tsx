@@ -7,6 +7,7 @@ import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { LogoutButton } from './AuthButton';
+import { modal } from './Modal';
 import { Button } from './ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
 import { Input } from './ui/input';
@@ -71,7 +72,7 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
             <TableRow key={todo.id}>
               <TableCell className="font-medium">{todo.name}</TableCell>
               <TableCell>
-                <Switch defaultChecked={todo.days.at(-1)?.isDone} onCheckedChange={() => toggle(todo.id)} />
+                <Switch defaultChecked={todo.days.at(-1)?.isDone} onCheckedChange={() => toggle({ id: todo.id })} />
               </TableCell>
               <TableCell>
                 <Eye className="cursor-pointer w-10" onClick={() => router.push(`/todo/${todo.id}`)} />
@@ -83,7 +84,20 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
                 todo.days.length
               }`}</TableCell>
               <TableCell>
-                <X size={15} className="cursor-pointer" onClick={() => remove(todo.id)} />
+                <X
+                  size={15}
+                  className="cursor-pointer"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    const res = await modal.question({
+                      title: 'Supprimer la todo ?',
+                      message: 'Cette action est irreversible',
+                    });
+                    if (res) {
+                      remove({ id: todo.id });
+                    }
+                  }}
+                />
               </TableCell>
             </TableRow>
           ))}
