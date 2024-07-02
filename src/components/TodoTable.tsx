@@ -3,8 +3,8 @@ import { addTodo, removeTodo, toggleTodo } from '@/actions/todo';
 import { TAddTodoForm, addTodoSchema } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, X } from 'lucide-react';
+import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
-import { useFormState } from 'react-dom';
 import { useForm } from 'react-hook-form';
 import { LogoutButton } from './AuthButton';
 import { Button } from './ui/button';
@@ -16,7 +16,9 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
   const router = useRouter();
 
-  const [state, formAction] = useFormState(addTodo, undefined);
+  const { execute: add, result: addResult } = useAction(addTodo);
+  const { execute: remove, result: removeResult } = useAction(removeTodo);
+  const { execute: toggle, result: toggleResult } = useAction(toggleTodo);
 
   const form = useForm<TAddTodoForm>({
     resolver: zodResolver(addTodoSchema),
@@ -29,9 +31,9 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
   return (
     <div className="flex gap-5">
       <div className="sticky top-16 h-fit rounded-lg border bg-background px-4 py-4 md:w-[260px] flex flex-col gap-3">
-        {state?.message && <div className="text-red-600">{state.message}</div>}
-        <Form {...form}>
-          <form action={formAction}>
+        {addResult.serverError && <div className="text-red-600">{addResult.serverError}</div>}
+        <Form {...form} state={addResult}>
+          <form onSubmit={form.handleSubmit(add)}>
             <div className="flex flex-col gap-3">
               <FormField
                 control={form.control}
@@ -69,7 +71,7 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
             <TableRow key={todo.id}>
               <TableCell className="font-medium">{todo.name}</TableCell>
               <TableCell>
-                <Switch defaultChecked={todo.days.at(-1)?.isDone} onCheckedChange={() => toggleTodo(todo.id)} />
+                <Switch defaultChecked={todo.days.at(-1)?.isDone} onCheckedChange={() => toggle(todo.id)} />
               </TableCell>
               <TableCell>
                 <Eye className="cursor-pointer w-10" onClick={() => router.push(`/todo/${todo.id}`)} />
@@ -81,7 +83,7 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
                 todo.days.length
               }`}</TableCell>
               <TableCell>
-                <X size={15} className="cursor-pointer" onClick={() => removeTodo(todo.id)} />
+                <X size={15} className="cursor-pointer" onClick={() => remove(todo.id)} />
               </TableCell>
             </TableRow>
           ))}

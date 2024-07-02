@@ -1,24 +1,22 @@
 'use server';
 
-import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { actionClient } from '@/lib/safe-action';
 import { addTodoSchema } from '@/lib/validation';
+import { flattenValidationErrors, returnValidationErrors } from 'next-safe-action';
 import { revalidatePath } from 'next/cache';
-import { ZodError } from 'zod';
+import { z } from 'zod';
 
-type TFormState = { message: string } | undefined;
-
-export const addTodo = async (prevState: TFormState, formData: FormData): Promise<TFormState> => {
-  try {
-    const session = await auth();
-    if (!session?.user?.id) throw new Error('User not found');
-
-    const data = Object.fromEntries(formData.entries());
-    const { name } = addTodoSchema.parse(data);
-
+export const addTodo = actionClient
+  .schema(addTodoSchema, {
+    handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { name }, ctx }) => {
+    if (name === 'etre raciste')
+      returnValidationErrors(addTodoSchema, { name: { _errors: ['pas gentil detre mechant'] } });
     const todos = await prisma.todo.findMany({
       where: {
-        ownerId: session.user.id,
+        ownerId: ctx.userId,
       },
     });
 
@@ -27,63 +25,54 @@ export const addTodo = async (prevState: TFormState, formData: FormData): Promis
     await prisma.todo.create({
       data: {
         name,
-        ownerId: session.user.id,
+        ownerId: ctx.userId,
         days: { create: {} },
       },
     });
 
     revalidatePath('/');
-  } catch (error) {
-    if (error instanceof ZodError)
-      return {
-        message: error.errors[0].message,
-      };
-    else if (error instanceof Error)
-      return {
-        message: error.message,
-      };
-    return { message: 'Error' };
-  }
-};
-
-export const removeTodo = async (id: string) => {
-  const session = await auth();
-
-  if (!session?.user?.id) return;
-
-  await prisma.todo.delete({
-    where: {
-      id,
-    },
   });
 
-  revalidatePath('/');
-};
+export const removeTodo = actionClient
+  .schema(z.string(), {
+    handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).formErrors,
+  })
+  .action(async ({ parsedInput: id, ctx }) => {
+    await prisma.todo.delete({
+      where: {
+        id,
+        ownerId: ctx.userId,
+      },
+    });
 
-export const toggleTodo = async (id: string) => {
-  const session = await auth();
-
-  if (!session?.user?.id) return;
-
-  const day = await prisma.day.findFirst({
-    where: {
-      todoId: id,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
+    revalidatePath('/');
   });
 
-  if (!day) return;
+export const toggleTodo = actionClient
+  .schema(z.string(), {
+    handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).formErrors,
+  })
+  .action(async ({ parsedInput: id, ctx }) => {
+    const day = await prisma.day.findFirst({
+      where: {
+        todoId: id,
+        todo: { ownerId: ctx.userId },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
 
-  await prisma.day.update({
-    where: {
-      id: day.id,
-    },
-    data: {
-      isDone: !day.isDone,
-    },
+    if (!day) throw new Error('Day not found');
+
+    await prisma.day.update({
+      where: {
+        id: day.id,
+      },
+      data: {
+        isDone: !day.isDone,
+      },
+    });
+
+    revalidatePath('/');
   });
-
-  revalidatePath('/');
-};
