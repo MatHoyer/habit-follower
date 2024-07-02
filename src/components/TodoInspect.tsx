@@ -61,10 +61,10 @@ export const TodoInspect: React.FC<{ todo: TTodo }> = ({ todo }) => {
       </div>
       <div className="flex flex-col gap-10">
         {sortedDays.map((year) => (
-          <div className="flex flex-col gap-4">
+          <div key={year.year} className="flex flex-col gap-4">
             <div className="text-3xl">{year.year}</div>
             {year.data.map((month) => (
-              <div className="flex flex-col gap-2">
+              <div key={month.month} className="flex flex-col gap-2">
                 <div className="text-xl">{getMonthString(month.month)}</div>
                 <div className="grid grid-cols-5 gap-4">
                   {month.data?.map((day) => (
