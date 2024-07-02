@@ -1,26 +1,52 @@
 'use client';
-import { DateString, getDateAsString } from '@/lib/utils';
+import { DateString, cn, getDateAsString } from '@/lib/utils';
 import { Day } from '@prisma/client';
 import { Check, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 
+const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+const getMonthString = (month: number) => {
+  const date = new Date();
+  date.setMonth(month);
+  return capitalize(getDateAsString(date, 'MMMM' as DateString));
+};
+
+type THystory = { year: number; data: { month: number; data: Day[] }[] }[];
+
 const sortDaysByYear = (days: Day[]) => {
-  const yearMap = new Map<number, Day[]>();
+  const history: { [key: string]: { [key: string]: Day[] } } = {};
 
-  for (const day of days) {
-    const year = day.createdAt.getFullYear();
-    const data = yearMap.get(year);
-    if (data) yearMap.set(year, [...data, day]);
-    else yearMap.set(year, [day]);
-  }
+  days.forEach((day) => {
+    const year = day.createdAt.getFullYear().toString();
+    const month = day.createdAt.getMonth();
+    if (!history[year]) {
+      history[year] = {};
+    }
+    if (!history[year][month]) {
+      history[year][month] = [];
+    }
+    history[year][month].push(day);
+  });
 
-  const obj = Array.from(yearMap.entries()).map(([year, days]) => ({
-    year,
-    days,
+  const historyArray: THystory = Object.keys(history).map((year) => ({
+    year: parseInt(year),
+    data: Object.keys(history[year]).map((month) => ({
+      month: parseInt(month),
+      data: history[year][month],
+    })),
   }));
 
-  return obj;
+  historyArray.forEach((yearObj) => {
+    yearObj.data.sort((a, b) => b.month - a.month);
+  });
+
+  historyArray.sort((a, b) => b.year - a.year);
+
+  return historyArray;
 };
 
 export const TodoInspect: React.FC<{ todo: TTodo }> = ({ todo }) => {
@@ -35,19 +61,33 @@ export const TodoInspect: React.FC<{ todo: TTodo }> = ({ todo }) => {
       </div>
       <div className="flex flex-col gap-10">
         {sortedDays.map((year) => (
-          <div key={year.year} className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
             <div className="text-3xl">{year.year}</div>
-            <div className="grid grid-cols-5 gap-4">
-              {year.days.map((day) => (
-                <div
-                  key={day.id}
-                  className="flex flex-col items-center justify-center rounded-lg border bg-background px-4 py-4 w-40"
-                >
-                  <div>{day.isDone ? <Check color="green" /> : <X color="red" />}</div>
-                  <div>{getDateAsString(day.createdAt, DateString.lDate)}</div>
+            {year.data.map((month) => (
+              <div className="flex flex-col gap-2">
+                <div className="text-xl">{getMonthString(month.month)}</div>
+                <div className="grid grid-cols-5 gap-4">
+                  {month.data?.map((day) => (
+                    <div
+                      key={day.id}
+                      className={cn(
+                        'group cursor-default flex flex-col items-center justify-center rounded-lg border bg-background px-4 py-4 w-40',
+                        day.isDone ? 'hover:bg-green-500 hover:text-black' : 'hover:bg-red-500'
+                      )}
+                    >
+                      <div>
+                        {day.isDone ? (
+                          <Check className="text-green-500 group-hover:text-black" />
+                        ) : (
+                          <X className="text-red-500 group-hover:text-white" />
+                        )}
+                      </div>
+                      <div>{getDateAsString(day.createdAt, 'eeee dd' as DateString)}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         ))}
       </div>
