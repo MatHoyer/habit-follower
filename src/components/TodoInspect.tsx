@@ -59,6 +59,7 @@ export const TodoInspect: React.FC<{ todo: TTodo }> = ({ todo }) => {
       <div className="sticky top-16 h-fit rounded-lg border bg-background px-4 py-4 md:w-[150px] flex justify-center">
         <Button onClick={() => router.back()}>Go back</Button>
       </div>
+
       <div className="flex flex-col gap-10">
         {sortedDays.map((year) => (
           <div key={year.year} className="flex flex-col gap-4">

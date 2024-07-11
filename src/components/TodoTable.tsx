@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { LogoutButton } from './AuthButton';
 import { modal } from './Modal';
+import { StatChart } from './StatChart';
 import { Button } from './ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
 import { Input } from './ui/input';
@@ -55,54 +56,57 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
         </Form>
         <LogoutButton />
       </div>
-      <Table>
-        <TableCaption>List of todos.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Go to</TableHead>
-            <TableHead className="w-[150px] text-right">%</TableHead>
-            <TableHead className="w-[150px] text-right">done / all</TableHead>
-            <TableHead></TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {todos.map((todo) => (
-            <TableRow key={todo.id}>
-              <TableCell className="font-medium">{todo.name}</TableCell>
-              <TableCell>
-                <Switch defaultChecked={todo.days.at(-1)?.isDone} onCheckedChange={() => toggle({ id: todo.id })} />
-              </TableCell>
-              <TableCell>
-                <Eye className="cursor-pointer w-10" onClick={() => router.push(`/todo/${todo.id}`)} />
-              </TableCell>
-              <TableCell className="text-right">{`${Math.floor(
-                (todo.days.filter((day) => day.isDone === true).length / todo.days.length) * 100
-              )}%`}</TableCell>
-              <TableCell className="text-right">{`${todo.days.filter((day) => day.isDone === true).length} / ${
-                todo.days.length
-              }`}</TableCell>
-              <TableCell>
-                <X
-                  size={15}
-                  className="cursor-pointer"
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    const res = await modal.question({
-                      title: 'Supprimer la todo ?',
-                      message: 'Cette action est irreversible',
-                    });
-                    if (res) {
-                      remove({ id: todo.id });
-                    }
-                  }}
-                />
-              </TableCell>
+      <div className="flex flex-col gap-5">
+        <Table>
+          <TableCaption>List of todos.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Go to</TableHead>
+              <TableHead className="w-[150px] text-right">%</TableHead>
+              <TableHead className="w-[150px] text-right">done / all</TableHead>
+              <TableHead></TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {todos.map((todo) => (
+              <TableRow key={todo.id}>
+                <TableCell className="font-medium">{todo.name}</TableCell>
+                <TableCell>
+                  <Switch defaultChecked={todo.days.at(-1)?.isDone} onCheckedChange={() => toggle({ id: todo.id })} />
+                </TableCell>
+                <TableCell>
+                  <Eye className="cursor-pointer w-10" onClick={() => router.push(`/todo/${todo.id}`)} />
+                </TableCell>
+                <TableCell className="text-right">{`${Math.floor(
+                  (todo.days.filter((day) => day.isDone === true).length / todo.days.length) * 100
+                )}%`}</TableCell>
+                <TableCell className="text-right">{`${todo.days.filter((day) => day.isDone === true).length} / ${
+                  todo.days.length
+                }`}</TableCell>
+                <TableCell>
+                  <X
+                    size={15}
+                    className="cursor-pointer"
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      const res = await modal.question({
+                        title: 'Supprimer la todo ?',
+                        message: 'Cette action est irreversible',
+                      });
+                      if (res) {
+                        remove({ id: todo.id });
+                      }
+                    }}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <StatChart todos={todos} />
+      </div>
     </div>
   );
 };
