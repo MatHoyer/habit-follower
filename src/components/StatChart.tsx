@@ -95,7 +95,7 @@ export const StatChart: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) => (value.lenght > 7 ? value.slice(0, 4) : value)}
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
             <ChartLegend content={<ChartLegendContent />} />
