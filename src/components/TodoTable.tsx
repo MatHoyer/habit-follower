@@ -1,8 +1,8 @@
 'use client';
-import { addTodo, removeTodo, toggleTodo } from '@/actions/todo';
+import { addTodo, changeColor, removeTodo, toggleTodo } from '@/actions/todo';
 import { TAddTodoForm, addTodoSchema } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, X } from 'lucide-react';
+import { Circle, Eye, X } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -64,8 +64,9 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
               <TableHead>Name</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Go to</TableHead>
+              <TableHead></TableHead>
               <TableHead className="w-[150px] text-right">%</TableHead>
-              <TableHead className="w-[150px] text-right">done / all</TableHead>
+              <TableHead className="text-right">done / all</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
@@ -78,6 +79,20 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
                 </TableCell>
                 <TableCell>
                   <Eye className="cursor-pointer w-10" onClick={() => router.push(`/todo/${todo.id}`)} />
+                </TableCell>
+                <TableCell>
+                  <div className="relative w-5 h-5 cursor-pointer">
+                    <input
+                      type="color"
+                      defaultValue={todo.color}
+                      className="cursor-pointer opacity-0 absolute inset-0 w-full h-full"
+                      onBlur={(e) => {
+                        e.stopPropagation();
+                        changeColor({ id: todo.id, color: e.target.value });
+                      }}
+                    />
+                    <Circle color={todo.color} fill={todo.color} />
+                  </div>
                 </TableCell>
                 <TableCell className="text-right">{`${Math.floor(
                   (todo.days.filter((day) => day.isDone === true).length / todo.days.length) * 100

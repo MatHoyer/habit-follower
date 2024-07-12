@@ -18,7 +18,7 @@ const getConfig = (todos: TTodo[]) => {
   for (const [index, todo] of todos.entries()) {
     config[todo.name] = {
       label: todo.name,
-      color: `hsl(var(--chart-${index + 1}))`,
+      color: todo.color,
     };
   }
   return config;

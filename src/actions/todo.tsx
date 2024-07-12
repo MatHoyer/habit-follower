@@ -2,7 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import { actionClient } from '@/lib/safe-action';
-import { addTodoSchema, removeTodoSchema, toggleTodoSchema } from '@/lib/validation';
+import { addTodoSchema, changeColorSchema, removeTodoSchema, toggleTodoSchema } from '@/lib/validation';
 import { flattenValidationErrors, returnValidationErrors } from 'next-safe-action';
 import { revalidatePath } from 'next/cache';
 
@@ -70,6 +70,31 @@ export const toggleTodo = actionClient
       },
       data: {
         isDone: !day.isDone,
+      },
+    });
+
+    revalidatePath('/');
+  });
+
+export const changeColor = actionClient
+  .schema(changeColorSchema, {
+    handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { id, color }, ctx }) => {
+    const todo = await prisma.todo.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!todo) throw new Error('Todo not found');
+
+    await prisma.todo.update({
+      where: {
+        id: todo.id,
+      },
+      data: {
+        color,
       },
     });
 

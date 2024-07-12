@@ -13,3 +13,8 @@ export const removeTodoSchema = z.object({
 export const toggleTodoSchema = z.object({
   id: z.string(),
 });
+
+export const changeColorSchema = z.object({
+  id: z.string(),
+  color: z.string(),
+});

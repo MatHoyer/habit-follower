@@ -70,6 +70,7 @@ model VerificationToken {
 model Todo {
   id         String   @id @default(cuid())
   name       String
+  color      String   @default("#000000")
 
   owner      User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId    String
