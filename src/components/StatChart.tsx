@@ -90,8 +90,9 @@ export const StatChart: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
         <CardTitle>Todos stats</CardTitle>
         <CardDescription>5 last month</CardDescription>
         <div className="flex gap-3">
-          {chartData.map((data) => (
+          {chartData.map((data, index) => (
             <Button
+              key={index}
               variant={'ghost'}
               onClick={() => {
                 router.push(`/date/${new Date().getFullYear()}/${data.month.toLocaleLowerCase()}`);
