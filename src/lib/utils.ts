@@ -21,3 +21,7 @@ export enum DateString {
 export const getDateAsString = (date: Date, type: DateString = DateString.full) => {
   return format(date, type, { locale: fr });
 };
+
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};

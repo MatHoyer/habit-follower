@@ -1,13 +1,9 @@
 'use client';
-import { DateString, cn, getDateAsString } from '@/lib/utils';
+import { DateString, capitalize, getDateAsString } from '@/lib/utils';
 import { Day } from '@prisma/client';
-import { Check, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import CheckCard from './CheckCard';
 import { Button } from './ui/button';
-
-const capitalize = (str: string) => {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
 
 const getMonthString = (month: number) => {
   const date = new Date();
@@ -69,22 +65,11 @@ export const TodoInspect: React.FC<{ todo: TTodo }> = ({ todo }) => {
                 <div className="text-xl">{getMonthString(month.month)}</div>
                 <div className="grid grid-cols-5 gap-4">
                   {month.data?.map((day) => (
-                    <div
+                    <CheckCard
                       key={day.id}
-                      className={cn(
-                        'group cursor-default flex flex-col items-center justify-center rounded-lg border bg-background px-4 py-4 w-40',
-                        day.isDone ? 'hover:bg-green-500 hover:text-black' : 'hover:bg-red-500'
-                      )}
-                    >
-                      <div>
-                        {day.isDone ? (
-                          <Check className="text-green-500 group-hover:text-black" />
-                        ) : (
-                          <X className="text-red-500 group-hover:text-white" />
-                        )}
-                      </div>
-                      <div>{getDateAsString(day.createdAt, 'eeee dd' as DateString)}</div>
-                    </div>
+                      isDone={day.isDone}
+                      text={getDateAsString(day.createdAt, 'eeee dd' as DateString)}
+                    />
                   ))}
                 </div>
               </div>

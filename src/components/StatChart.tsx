@@ -11,7 +11,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { DateString, getDateAsString } from '@/lib/utils';
+import { capitalize, DateString, getDateAsString } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
+import { Button } from './ui/button';
 
 const getConfig = (todos: TTodo[]) => {
   const config = {} as ChartConfig;
@@ -50,7 +52,7 @@ const getData = (todos: TTodo[]) => {
         if (day.createdAt.getMonth() === today.getMonth() && day.isDone) count++;
       }
 
-      data[getDateAsString(today, 'MMMM' as DateString)] = count;
+      data[capitalize(getDateAsString(today, 'MMMM' as DateString))] = count;
     }
 
     return { name: todo.name, data };
@@ -61,7 +63,7 @@ const getData = (todos: TTodo[]) => {
     const today = new Date();
     today.setMonth(today.getMonth() - i);
     months.push({
-      month: getDateAsString(today, 'MMMM' as DateString),
+      month: capitalize(getDateAsString(today, 'MMMM' as DateString)),
     });
   }
 
@@ -77,6 +79,8 @@ const getData = (todos: TTodo[]) => {
 };
 
 export const StatChart: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
+  const router = useRouter();
+
   const chartConfig = getConfig(todos);
   const chartData = getData(todos);
 
@@ -85,6 +89,18 @@ export const StatChart: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
       <CardHeader>
         <CardTitle>Todos stats</CardTitle>
         <CardDescription>5 last month</CardDescription>
+        <div className="flex gap-3">
+          {chartData.map((data) => (
+            <Button
+              variant={'ghost'}
+              onClick={() => {
+                router.push(`/date/${new Date().getFullYear()}/${data.month.toLocaleLowerCase()}`);
+              }}
+            >
+              {data.month}
+            </Button>
+          ))}
+        </div>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -99,7 +115,7 @@ export const StatChart: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
             />
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
             <ChartLegend content={<ChartLegendContent />} />
-            {todos.map((todo, index) => (
+            {todos.map((todo) => (
               <Bar
                 key={todo.name}
                 dataKey={todo.name}
