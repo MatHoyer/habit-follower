@@ -6,7 +6,6 @@ import { Circle, Eye, X } from 'lucide-react';
 import { useAction } from 'next-safe-action/hooks';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { LogoutButton } from './AuthButton';
 import { modal } from './Modal';
 import { StatChart } from './StatChart';
 import { Button } from './ui/button';
@@ -54,7 +53,6 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
             </div>
           </form>
         </Form>
-        <LogoutButton />
       </div>
       <div className="flex flex-col gap-5">
         <Table>
@@ -78,7 +76,7 @@ export const TodoTable: React.FC<{ todos: TTodo[] }> = ({ todos }) => {
                   <Switch defaultChecked={todo.days.at(-1)?.isDone} onCheckedChange={() => toggle({ id: todo.id })} />
                 </TableCell>
                 <TableCell>
-                  <Eye className="cursor-pointer w-10" onClick={() => router.push(`/todo/${todo.id}`)} />
+                  <Eye className="cursor-pointer w-10" onClick={() => router.push(`/daily/${todo.id}`)} />
                 </TableCell>
                 <TableCell>
                   <div className="relative w-5 h-5 cursor-pointer">

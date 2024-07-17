@@ -15,6 +15,16 @@ export const useTodos = async () => {
   return todos;
 };
 
+export const useSimpleTodos = async () => {
+  const session = await auth();
+  const todos = await prisma.simpleTodo.findMany({
+    where: {
+      ownerId: session?.user?.id,
+    },
+  });
+  return todos;
+};
+
 export const useTodo = async (id: string) => {
   const session = await auth();
   const todo = await prisma.todo.findUnique({

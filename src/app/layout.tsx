@@ -1,4 +1,5 @@
 import Modal from '@/components/Modal';
+import Navbar from '@/components/nav/Navbar';
 import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 import { SessionProvider } from 'next-auth/react';
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="dark">
           <SessionProvider>
             <Modal />
+            <Navbar />
             <div className="flex justify-center">{children}</div>
           </SessionProvider>
         </ThemeProvider>

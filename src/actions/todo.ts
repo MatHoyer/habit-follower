@@ -3,7 +3,7 @@
 import prisma from '@/lib/prisma';
 import { actionClient } from '@/lib/safe-action';
 import { addTodoSchema, changeColorSchema, removeTodoSchema, toggleTodoSchema } from '@/lib/validation';
-import { flattenValidationErrors, returnValidationErrors } from 'next-safe-action';
+import { flattenValidationErrors } from 'next-safe-action';
 import { revalidatePath } from 'next/cache';
 
 export const addTodo = actionClient
@@ -11,8 +11,6 @@ export const addTodo = actionClient
     handleValidationErrorsShape: (ve) => flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput: { name }, ctx }) => {
-    if (name === 'etre raciste')
-      returnValidationErrors(addTodoSchema, { name: { _errors: ['pas gentil detre mechant'] } });
     const todos = await prisma.todo.findMany({
       where: {
         ownerId: ctx.userId,
