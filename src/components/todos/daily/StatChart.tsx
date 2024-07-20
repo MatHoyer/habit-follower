@@ -2,6 +2,7 @@
 
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   ChartConfig,
@@ -13,7 +14,6 @@ import {
 } from '@/components/ui/chart';
 import { capitalize, DateString, getDateAsString } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
-import { Button } from './ui/button';
 
 const getConfig = (todos: TTodo[]) => {
   const config = {} as ChartConfig;

@@ -1,5 +1,5 @@
-import { TodoInspect } from '@/components/TodoInspect';
 import { useTodo } from '@/components/hook/useTodos';
+import { TodoInspect } from '@/components/todos/daily/TodoInspect';
 
 const Todo: React.FC<{ params: { todoId: string } }> = async ({ params }) => {
   const todo = await useTodo(params.todoId);

@@ -1,12 +1,12 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { capitalize, DateString, getDateAsString } from '@/lib/utils';
 import { getDaysInMonth } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import CheckCard from './CheckCard';
-import { Button } from './ui/button';
-import { Card, CardContent, CardHeader } from './ui/card';
 
 const months: { [month: string]: number } = {
   janvier: 0,

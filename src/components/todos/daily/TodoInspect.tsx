@@ -1,9 +1,9 @@
 'use client';
+import { Button } from '@/components/ui/button';
 import { DateString, capitalize, getDateAsString } from '@/lib/utils';
 import { Day } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import CheckCard from './CheckCard';
-import { Button } from './ui/button';
 
 const getMonthString = (month: number) => {
   const date = new Date();

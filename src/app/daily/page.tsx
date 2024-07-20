@@ -1,6 +1,6 @@
 import { LoginButton } from '@/components/AuthButton';
 import { useTodos } from '@/components/hook/useTodos';
-import { TodoTable } from '@/components/TodoTable';
+import { TodoTable } from '@/components/todos/daily/TodoTable';
 import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 

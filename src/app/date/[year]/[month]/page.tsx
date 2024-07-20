@@ -1,5 +1,5 @@
 import { useTodos } from '@/components/hook/useTodos';
-import { MonthInspect } from '@/components/MonthInspect';
+import { MonthInspect } from '@/components/todos/daily/MonthInspect';
 
 const Month: React.FC<{ params: { year: string; month: string } }> = async ({ params }) => {
   const todos = await useTodos();

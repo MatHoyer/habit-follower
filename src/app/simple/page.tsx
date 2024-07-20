@@ -1,6 +1,6 @@
 import { LoginButton } from '@/components/AuthButton';
 import { useSimpleTodos } from '@/components/hook/useTodos';
-import SimpleTodoTable from '@/components/SimpleTodoTable';
+import SimpleTodoTable from '@/components/todos/simple/SimpleTodoTable';
 import { auth } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
