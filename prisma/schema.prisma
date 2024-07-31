@@ -69,7 +69,7 @@ model VerificationToken {
 }
 
 model Todo {
-  id         String   @id @default(cuid())
+  id         Int   @id @default(autoincrement())
   name       String
   color      String   @default("#000000")
 
@@ -85,18 +85,18 @@ model Todo {
 }
 
 model Day {
-  id         String   @id @default(cuid())
+  id         Int   @id @default(autoincrement())
   isDone     Boolean @default(false)
 
   todo       Todo @relation(fields: [todoId], references: [id], onDelete: Cascade)
-  todoId     String
+  todoId     Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model SimpleTodo {
-  id         String   @id @default(cuid())
+  id         Int   @id @default(autoincrement())
   name       String
 
   owner      User @relation(fields: [ownerId], references: [id], onDelete: Cascade)
