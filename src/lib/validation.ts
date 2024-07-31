@@ -11,14 +11,14 @@ export const addSimpleTodoSchema = z.object({
 export type TAddTodoForm = z.infer<typeof addTodoSchema>;
 
 export const removeTodoSchema = z.object({
-  id: z.string(),
+  id: z.number(),
 });
 
 export const toggleTodoSchema = z.object({
-  id: z.string(),
+  id: z.number(),
 });
 
 export const changeColorSchema = z.object({
-  id: z.string(),
+  id: z.number(),
   color: z.string(),
 });
