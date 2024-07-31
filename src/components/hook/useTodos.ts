@@ -11,6 +11,7 @@ export const useTodos = async () => {
     include: {
       days: true,
     },
+    orderBy: { id: 'asc' },
   });
   return todos;
 };
@@ -21,6 +22,7 @@ export const useSimpleTodos = async () => {
     where: {
       ownerId: session?.user?.id,
     },
+    orderBy: { id: 'asc' },
   });
   return todos;
 };
