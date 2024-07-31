@@ -27,7 +27,7 @@ export const useSimpleTodos = async () => {
   return todos;
 };
 
-export const useTodo = async (id: string) => {
+export const useTodo = async (id: number) => {
   const session = await auth();
   const todo = await prisma.todo.findUnique({
     where: {
