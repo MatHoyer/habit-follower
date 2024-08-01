@@ -61,6 +61,7 @@ const getData = (todos: TTodo[]) => {
   const months = [];
   for (let i = 4; i >= 0; i--) {
     const today = new Date();
+    today.setDate(1);
     today.setMonth(today.getMonth() - i);
     months.push({
       month: capitalize(getDateAsString(today, 'MMMM' as DateString)),
