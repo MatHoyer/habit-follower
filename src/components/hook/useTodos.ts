@@ -9,9 +9,9 @@ export const useTodos = async () => {
       ownerId: session?.user?.id,
     },
     include: {
-      days: true,
+      days: { orderBy: { createdAt: 'desc' } },
     },
-    orderBy: { id: 'desc' },
+    orderBy: { id: 'asc' },
   });
   return todos;
 };
