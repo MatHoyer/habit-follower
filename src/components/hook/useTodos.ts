@@ -11,7 +11,7 @@ export const useTodos = async () => {
     include: {
       days: true,
     },
-    orderBy: { id: 'asc' },
+    orderBy: { id: 'desc' },
   });
   return todos;
 };
