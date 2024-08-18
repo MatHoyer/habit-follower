@@ -35,7 +35,7 @@ export const useTodo = async (id: number) => {
       ownerId: session?.user?.id,
     },
     include: {
-      days: { orderBy: { createdAt: 'asc' } },
+      days: { orderBy: { createdAt: 'desc' } },
     },
   });
 
