@@ -9,7 +9,7 @@ export const useTodos = async () => {
       ownerId: session?.user?.id,
     },
     include: {
-      days: { orderBy: { createdAt: 'desc' } },
+      days: { orderBy: { createdAt: 'asc' } },
     },
     orderBy: { id: 'asc' },
   });
