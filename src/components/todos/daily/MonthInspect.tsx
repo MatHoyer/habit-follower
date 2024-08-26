@@ -41,11 +41,12 @@ const DayCard: React.FC<{ date: Date; todos: { name: string; isDone: boolean }[]
 export const MonthInspect: React.FC<{ todos: TTodo[]; date: { year: string; month: string } }> = ({ todos, date }) => {
   const router = useRouter();
   let daysInMonth = [];
+  const decodedMonth = decodeURIComponent(date.month);
 
-  const countDays = getDaysInMonth(new Date(Number(date.year), months[date.month]));
+  const countDays = getDaysInMonth(new Date(Number(date.year), months[decodedMonth]));
   for (let i = countDays; i >= 1; i--) {
     daysInMonth.push({
-      date: new Date(Number(date.year), months[date.month], i),
+      date: new Date(Number(date.year), months[decodedMonth], i),
       todos: [] as { name: string; isDone: boolean }[],
     });
   }
@@ -71,7 +72,7 @@ export const MonthInspect: React.FC<{ todos: TTodo[]; date: { year: string; mont
         <Button onClick={() => router.back()}>Go back</Button>
       </div>
       <div className="flex flex-col gap-5">
-        <h1 className="text-3xl">{capitalize(date.month) + ' ' + date.year}</h1>
+        <h1 className="text-3xl">{capitalize(decodedMonth) + ' ' + date.year}</h1>
         {daysInMonth.map((day, index) => (
           <DayCard key={index} date={day.date} todos={day.todos} />
         ))}
